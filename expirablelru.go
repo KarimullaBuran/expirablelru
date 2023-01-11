@@ -9,6 +9,7 @@ import (
 	"container/list"
 	"sync"
 	"time"
+	"fmt"
 )
 
 // Cache implements a thread safe LRU with expirable entries.
@@ -101,7 +102,7 @@ func (c *Cache) add(key, value interface{}, ttl time.Duration) (evicted bool) {
 	c.Lock()
 	defer c.Unlock()
 	now := time.Now()
-
+	fmt.Println("Printing current Keys", c.items)
 	// Check for existing item
 	if ent, ok := c.items[key]; ok {
 		c.evictList.MoveToFront(ent)
@@ -111,11 +112,13 @@ func (c *Cache) add(key, value interface{}, ttl time.Duration) (evicted bool) {
 	}
 
 	// Add new item
+	fmt.Println("Adding new item from lru")
 	ent := &expirableEntry{key: key, value: value, expiresAt: now.Add(ttl)}
 	entry := c.evictList.PushFront(ent)
 	c.items[key] = entry
 
 	// Verify size not exceeded
+	fmt.Println("Verifying size")
 	if c.size > 0 && len(c.items) > c.size {
 		c.removeOldest()
 		return true
