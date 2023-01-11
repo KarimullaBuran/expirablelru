@@ -1,3 +1,3 @@
-module github.com/projectdiscovery/expirablelru
+module github.com/KarimullaBuran/expirablelru
 
 go 1.14
